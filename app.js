@@ -1,9 +1,27 @@
 const express = require("express");
-const mongoose = require("mongoose");
-const userRouter = require("./routes/users");
+
+const dotenv = require("dotenv");
+dotenv.config();
 
 const app = express();
-const port = 3000;
+
+const PORT = process.env.PORT;
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN;
+
+var cors = require("cors");
+
+app.use(cors());
+
+const mongoose = require("mongoose");
+const agentsRouter = require("./routes/agents");
+
+console.log({ PORT });
+console.log({ ALLOWED_ORIGIN });
+
+var corsOptions = {
+  origin: ALLOWED_ORIGIN,
+  optionsSuccessStatus: 200,
+};
 
 // Connect to MongoDB
 mongoose
@@ -14,8 +32,8 @@ mongoose
 app.use(express.json());
 
 // Use the user router
-app.use("/api/users", userRouter);
+app.use("/agents", agentsRouter);
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
 });
