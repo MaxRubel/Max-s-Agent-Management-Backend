@@ -1,10 +1,70 @@
-const mongoose = require("mongoose");
+const { DataTypes } = require('sequelize');
+const sequelize = require('../database');
 
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  department: Number,
-  interests: Array,
+// Define the Agent model
+const Agent = sequelize.define('Agent', {
+  fullName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  department: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  interests: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    get() {
+      return this.getDataValue('interests').split(',');
+    },
+    set(val) {
+      this.setDataValue('interests', val.join(','));
+    },
+  },
 });
 
-module.exports = mongoose.model("User", userSchema);
+// Sample data
+const sampleAgents = [
+  { fullName: 'John Doe', email: 'john@example.com', department: "film", interests: ['coding', 'reading'] },
+  { fullName: 'Jane Smith', email: 'jane@example.com', department: "music", interests: ['traveling', 'photography'] },
+  { fullName: 'Bob Johnson', email: 'bob@example.com', department: "TV", interests: ['sports', 'cooking'] },
+];
+
+// Function to load sample data
+async function loadSampleData() {
+  try {
+    await Agent.sync({ force: true });
+    console.log('Database synced');
+
+    await Agent.bulkCreate(sampleAgents);
+
+    const agentCount = await Agent.count();
+    console.log(`Total agents in database: ${agentCount}`);
+  } catch (error) {
+    console.error('Error loading sample data:', error);
+    throw error;
+  }
+}
+
+// Function to initialize the database
+async function initializeDatabase() {
+  try {
+    await sequelize.authenticate();
+    console.log('Database connection has been established successfully.');
+    await loadSampleData();
+    console.log('Sample data loaded successfully');
+  } catch (error) {
+    console.error('Unable to initialize database:', error);
+    throw error;
+  }
+}
+
+module.exports = {
+  Agent,
+  initializeDatabase
+};

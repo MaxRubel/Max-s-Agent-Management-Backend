@@ -1,14 +1,13 @@
 const express = require("express");
+const { Agent } = require("../models/Agent");
 const router = express.Router();
-const User = require("../models/Agent");
-const Agent = require("../models/Agent");
 
 // Get all agents
 router.get("/", async (req, res) => {
-  console.log("Fetching Agents");
   try {
-    const users = await Agent.find();
-    res.json(users);
+    const agents = await Agent.findAll();
+    res.status(200).json(agents);
+    Agent
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

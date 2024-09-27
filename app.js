@@ -1,39 +1,49 @@
 const express = require("express");
+const app = express();
 
 const dotenv = require("dotenv");
 dotenv.config();
 
-const app = express();
+var cors = require("cors");
+app.use(cors());
 
 const PORT = process.env.PORT;
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN;
 
-var cors = require("cors");
-
-app.use(cors());
-
-const mongoose = require("mongoose");
-const agentsRouter = require("./routes/agents");
-
-console.log({ PORT });
-console.log({ ALLOWED_ORIGIN });
-
-var corsOptions = {
+const corsOptions = {
   origin: ALLOWED_ORIGIN,
   optionsSuccessStatus: 200,
 };
 
-// Connect to MongoDB
-mongoose
-  .connect("mongodb://localhost:27017/myapp")
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("Could not connect to MongoDB", err));
+const sequelize = require('./database');
+const { initializeDatabase } = require("./models/Agent");
 
-app.use(express.json());
+console.log({ PORT });
+console.log({ ALLOWED_ORIGIN });
 
-// Use the user router
-app.use("/agents", agentsRouter);
+const agentsRouter = require("./routes/agents");
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+async function startServer() {
+  try {
+    await initializeDatabase();
+    console.log('Database connection has been established successfully.');
+
+    await sequelize.sync();
+    console.log('Database synchronized');
+
+    app.use(express.json());
+
+    //router
+    app.use("/agents", agentsRouter);
+
+    app.listen(PORT, () => {
+      console.log(`Server running at http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+}
+
+startServer();
+
+module.exports = app;
