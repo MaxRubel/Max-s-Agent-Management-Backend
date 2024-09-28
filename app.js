@@ -5,7 +5,6 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 var cors = require("cors");
-app.use(cors());
 
 const PORT = process.env.PORT;
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN;
@@ -14,6 +13,8 @@ const corsOptions = {
   origin: ALLOWED_ORIGIN,
   optionsSuccessStatus: 200,
 };
+
+app.use(cors(corsOptions));
 
 const sequelize = require('./database');
 const { initializeDatabase } = require("./models/Agent");

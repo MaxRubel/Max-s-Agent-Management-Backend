@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../database');
+const { sampleAgents } = require('./SampleData');
 
 // Define the Agent model
 const Agent = sequelize.define('Agent', {
@@ -20,13 +21,6 @@ const Agent = sequelize.define('Agent', {
     type: DataTypes.STRING,
   },
 });
-
-// Sample data
-const sampleAgents = [
-  { fullName: 'John Doe', email: 'john@example.com', department: "film", interests: 'coding, reading' },
-  { fullName: 'Jane Smith', email: 'jane@example.com', department: "music", interests: 'traveling, photography' },
-  { fullName: 'Bob Johnson', email: 'bob@example.com', department: "TV", interests: 'sports, cooking' },
-];
 
 // Function to load sample data
 async function loadSampleData() {
