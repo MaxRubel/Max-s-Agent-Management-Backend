@@ -18,31 +18,21 @@ const Agent = sequelize.define('Agent', {
   },
   interests: {
     type: DataTypes.STRING,
-    allowNull: false,
-    get() {
-      return this.getDataValue('interests').split(',');
-    },
-    set(val) {
-      this.setDataValue('interests', val.join(','));
-    },
   },
 });
 
 // Sample data
 const sampleAgents = [
-  { fullName: 'John Doe', email: 'john@example.com', department: "film", interests: ['coding', 'reading'] },
-  { fullName: 'Jane Smith', email: 'jane@example.com', department: "music", interests: ['traveling', 'photography'] },
-  { fullName: 'Bob Johnson', email: 'bob@example.com', department: "TV", interests: ['sports', 'cooking'] },
+  { fullName: 'John Doe', email: 'john@example.com', department: "film", interests: 'coding, reading' },
+  { fullName: 'Jane Smith', email: 'jane@example.com', department: "music", interests: 'traveling, photography' },
+  { fullName: 'Bob Johnson', email: 'bob@example.com', department: "TV", interests: 'sports, cooking' },
 ];
 
 // Function to load sample data
 async function loadSampleData() {
   try {
     await Agent.sync({ force: true });
-    console.log('Database synced');
-
     await Agent.bulkCreate(sampleAgents);
-
     const agentCount = await Agent.count();
     console.log(`Total agents in database: ${agentCount}`);
   } catch (error) {

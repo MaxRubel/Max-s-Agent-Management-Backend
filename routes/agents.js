@@ -15,67 +15,60 @@ router.get("/", async (req, res) => {
 // Get one agent
 router.get("/:id", async (req, res) => {
   try {
-    const user = await Agent.findById(req.params.id);
-    if (user == null) {
-      return res.status(404).json({ message: "User not found" });
+    const agent = await Agent.findById(req.params.id);
+    if (agent == null) {
+      return res.status(404).json({ message: "Agent not found" });
     }
     res.json(user);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Oopsies" + err.message });
   }
 });
 
-// Create a user
+// Create an agent
 router.post("/", async (req, res) => {
-  const user = new Agent({
-    name: req.body.name,
+  const agent = new Agent({
+    fullName: req.body.fullName,
     email: req.body.email,
-    age: req.body.age,
+    department: req.body.department,
+    interests: req.body.interests
   });
 
   try {
-    const newUser = await user.save();
-    res.status(201).json(newUser);
+    const newAgent = await agent.save();
+    res.status(201).json(newAgent);
   } catch (err) {
+    console.error("something whent wrong: ", err)
     res.status(400).json({ message: err.message });
   }
 });
 
-// Update a user
-router.patch("/:id", async (req, res) => {
+// Update an agent
+router.put("/:id", async (req, res) => {
   try {
-    const user = await Agent.findById(req.params.id);
-    if (user == null) {
-      return res.status(404).json({ message: "User not found" });
+    const agent = await Agent.findByPk(req.params.id);
+    if (agent == null) {
+      return res.status(404).json({ message: "Agent not found" });
     }
-
-    if (req.body.name != null) {
-      user.name = req.body.name;
-    }
-    if (req.body.email != null) {
-      user.email = req.body.email;
-    }
-    if (req.body.age != null) {
-      user.age = req.body.age;
-    }
-
-    const updatedUser = await user.save();
-    res.json(updatedUser);
+    await agent.update(req.body);
+    res.status(204).end();
   } catch (err) {
+    console.error(err)
     res.status(400).json({ message: err.message });
   }
 });
 
-// Delete a user
+// Delete an agent
 router.delete("/:id", async (req, res) => {
   try {
-    const user = await Agent.findById(req.params.id);
-    if (user == null) {
+    const agent = await Agent.findByPk(req.params.id);
+    if (agent == null) {
       return res.status(404).json({ message: "User not found" });
     }
-    await user.remove();
-    res.json({ message: "User deleted" });
+    await agent.destroy();
+    res.status(200).json({ message: "User deleted" });
   } catch (err) {
+    console.error(err)
     res.status(500).json({ message: err.message });
   }
 });
