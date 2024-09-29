@@ -1,5 +1,8 @@
 const express = require("express");
 const app = express();
+const mongoose = require("mongoose");
+const agentsRouter = require("./routes/agents");
+const { initializeDatabase } = require("./db/initializeDB");
 
 const dotenv = require("dotenv");
 dotenv.config();
@@ -8,6 +11,7 @@ var cors = require("cors");
 
 const PORT = process.env.PORT;
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN;
+const MONGODB_URI = process.env.MONGODB_URI;
 
 const corsOptions = {
   origin: ALLOWED_ORIGIN,
@@ -16,21 +20,15 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-const sequelize = require('./database');
-const { initializeDatabase } = require("./models/Agent");
-
 console.log({ PORT });
 console.log({ ALLOWED_ORIGIN });
 
-const agentsRouter = require("./routes/agents");
-
 async function startServer() {
   try {
-    await initializeDatabase();
-    console.log('Database connection has been established successfully.');
+    await mongoose.connect(MONGODB_URI);
+    console.log('MongoDB connection has been established successfully.');
 
-    await sequelize.sync();
-    console.log('Database synchronized');
+    initializeDatabase()
 
     app.use(express.json());
 

@@ -1,54 +1,72 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../database');
 const { sampleAgents } = require('./SampleData');
+const mongoose = require('mongoose');
 
-// Define the Agent model
-const Agent = sequelize.define('Agent', {
-  fullName: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-  },
-  department: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  interests: {
-    type: DataTypes.STRING,
-  },
+// Agent Model
+const agentSchema = new mongoose.Schema({
+  fullName: String,
+  email: String,
+  department: String,
+  interests: String
 });
 
-// Function to load sample data
-async function loadSampleData() {
+const Agent = mongoose.model('Agent', agentSchema);
+
+// Create
+async function createAgent(agentData) {
   try {
-    await Agent.sync({ force: true });
-    await Agent.bulkCreate(sampleAgents);
-    const agentCount = await Agent.count();
-    console.log(`Total agents in database: ${agentCount}`);
+    const newAgent = new Agent(agentData);
+    return await newAgent.save();
   } catch (error) {
-    console.error('Error loading sample data:', error);
+    console.error('Error creating agent:', error);
     throw error;
   }
 }
 
-// Function to initialize the database
-async function initializeDatabase() {
+// Get (all)
+async function getAllAgents() {
   try {
-    await sequelize.authenticate();
-    console.log('Database connection has been established successfully.');
-    await loadSampleData();
-    console.log('Sample data loaded successfully');
+    return await Agent.find();
   } catch (error) {
-    console.error('Unable to initialize database:', error);
+    console.error('Error getting all agents:', error);
+    throw error;
+  }
+}
+
+// Get (one)
+async function getAgentById(id) {
+  try {
+    return await Agent.findById(id);
+  } catch (error) {
+    console.error('Error getting agent by ID:', error);
+    throw error;
+  }
+}
+
+// Update
+async function updateAgent(id, updateData) {
+  try {
+    return await Agent.findByIdAndUpdate(id, updateData, { new: true });
+  } catch (error) {
+    console.error('Error updating agent:', error);
+    throw error;
+  }
+}
+
+// Delete
+async function deleteAgent(id) {
+  try {
+    return await Agent.findByIdAndDelete(id);
+  } catch (error) {
+    console.error('Error deleting agent:', error);
     throw error;
   }
 }
 
 module.exports = {
   Agent,
-  initializeDatabase
+  getAllAgents,
+  createAgent,
+  getAgentById,
+  updateAgent,
+  deleteAgent
 };

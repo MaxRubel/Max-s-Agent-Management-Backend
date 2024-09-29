@@ -1,11 +1,18 @@
 const express = require("express");
-const { Agent } = require("../models/Agent");
+const {
+  Agent,
+  getAllAgents,
+  getAgentById,
+  createAgent,
+  updateAgent,
+  deleteAgent
+} = require("../models/Agent");
 const router = express.Router();
 
 // Get all agents
 router.get("/", async (req, res) => {
   try {
-    const agents = await Agent.findAll();
+    const agents = await getAllAgents();
     res.status(200).json(agents);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -15,30 +22,28 @@ router.get("/", async (req, res) => {
 // Get one agent
 router.get("/:id", async (req, res) => {
   try {
-    const agent = await Agent.findById(req.params.id);
+    const agent = await getAgentById(req.params.id);
     if (agent == null) {
       return res.status(404).json({ message: "Agent not found" });
     }
-    res.json(user);
+    res.json(agent);
   } catch (err) {
-    res.status(500).json({ message: "Oopsies" + err.message });
+    res.status(500).json({ message: "Oopsies: " + err.message });
   }
 });
 
 // Create an agent
 router.post("/", async (req, res) => {
-  const agent = new Agent({
-    fullName: req.body.fullName,
-    email: req.body.email,
-    department: req.body.department,
-    interests: req.body.interests
-  });
-
   try {
-    const newAgent = await agent.save();
+    const newAgent = await createAgent({
+      fullName: req.body.fullName,
+      email: req.body.email,
+      department: req.body.department,
+      interests: req.body.interests
+    });
     res.status(201).json(newAgent);
   } catch (err) {
-    console.error("something whent wrong: ", err)
+    console.error("Something went wrong: ", err);
     res.status(400).json({ message: err.message });
   }
 });
@@ -46,14 +51,13 @@ router.post("/", async (req, res) => {
 // Update an agent
 router.put("/:id", async (req, res) => {
   try {
-    const agent = await Agent.findByPk(req.params.id);
-    if (agent == null) {
+    const updatedAgent = await updateAgent(req.params.id, req.body);
+    if (updatedAgent == null) {
       return res.status(404).json({ message: "Agent not found" });
     }
-    await agent.update(req.body);
-    res.status(204).end();
+    res.json(updatedAgent);
   } catch (err) {
-    console.error(err)
+    console.error(err);
     res.status(400).json({ message: err.message });
   }
 });
@@ -61,14 +65,13 @@ router.put("/:id", async (req, res) => {
 // Delete an agent
 router.delete("/:id", async (req, res) => {
   try {
-    const agent = await Agent.findByPk(req.params.id);
-    if (agent == null) {
-      return res.status(404).json({ message: "User not found" });
+    const deletedAgent = await deleteAgent(req.params.id);
+    if (deletedAgent == null) {
+      return res.status(404).json({ message: "Agent not found" });
     }
-    await agent.destroy();
-    res.status(200).json({ message: "User deleted" });
+    res.json({ message: "Agent deleted" });
   } catch (err) {
-    console.error(err)
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
 });
