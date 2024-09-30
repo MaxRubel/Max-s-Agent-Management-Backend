@@ -20,15 +20,17 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+//env check--Delete later
 console.log({ PORT });
 console.log({ ALLOWED_ORIGIN });
+console.log({ MONGODB_URI });
 
 async function startServer() {
   try {
     await mongoose.connect(MONGODB_URI);
-    console.log('MongoDB connection has been established successfully.');
+    console.log("MongoDB connection has been established successfully.");
 
-    initializeDatabase()
+    initializeDatabase();
 
     app.use(express.json());
 
@@ -39,7 +41,7 @@ async function startServer() {
       console.log(`Server running at http://localhost:${PORT}`);
     });
   } catch (error) {
-    console.error('Unable to connect to the database:', error);
+    console.error("Unable to connect to the database:", error);
   }
 }
 

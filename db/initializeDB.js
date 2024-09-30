@@ -5,7 +5,7 @@ async function loadSampleData() {
   try {
     await Agent.insertMany(sampleAgents);
   } catch (error) {
-    console.error('Error loading sample data:', error);
+    console.error("Error loading sample data:", error);
   }
 }
 
@@ -15,15 +15,15 @@ async function initializeDatabase() {
     const count = await Agent.countDocuments();
     if (count === 0) {
       await loadSampleData();
-      console.log('Sample data loaded successfully.');
+      console.log("Sample data loaded successfully.");
     } else {
-      console.log('Database is full.');
+      console.log("Database is already full.");
     }
   } catch (error) {
-    console.error('Error initializing database:', error);
+    console.error("Error initializing database:", error);
   }
 }
 
 module.exports = {
-  initializeDatabase
-}
+  initializeDatabase,
+};

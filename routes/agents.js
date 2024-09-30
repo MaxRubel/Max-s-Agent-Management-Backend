@@ -1,13 +1,14 @@
 const express = require("express");
+const router = express.Router();
+
 const {
   Agent,
   getAllAgents,
   getAgentById,
   createAgent,
   updateAgent,
-  deleteAgent
+  deleteAgent,
 } = require("../models/Agent");
-const router = express.Router();
 
 // Get all agents
 router.get("/", async (req, res) => {
@@ -39,7 +40,7 @@ router.post("/", async (req, res) => {
       fullName: req.body.fullName,
       email: req.body.email,
       department: req.body.department,
-      interests: req.body.interests
+      interests: req.body.interests,
     });
     res.status(201).json(newAgent);
   } catch (err) {
