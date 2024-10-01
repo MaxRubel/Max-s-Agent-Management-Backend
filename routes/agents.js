@@ -12,6 +12,7 @@ const {
 
 // Get all agents
 router.get("/", async (req, res) => {
+  console.log("GET: getting all agents");
   try {
     const agents = await getAllAgents();
     res.status(200).json(agents);
@@ -22,6 +23,7 @@ router.get("/", async (req, res) => {
 
 // Get one agent
 router.get("/:id", async (req, res) => {
+  console.log("GET: retreive single agent: ", req.params.id);
   try {
     const agent = await getAgentById(req.params.id);
     if (agent == null) {
@@ -35,6 +37,7 @@ router.get("/:id", async (req, res) => {
 
 // Create an agent
 router.post("/", async (req, res) => {
+  console.log("POST: creating new: ", req.body.fullName);
   try {
     const newAgent = await createAgent({
       fullName: req.body.fullName,
@@ -51,6 +54,7 @@ router.post("/", async (req, res) => {
 
 // Update an agent
 router.put("/:id", async (req, res) => {
+  console.log("PUT: updating agent: ", req.body.fullName);
   try {
     const updatedAgent = await updateAgent(req.params.id, req.body);
     if (updatedAgent == null) {
@@ -65,6 +69,7 @@ router.put("/:id", async (req, res) => {
 
 // Delete an agent
 router.delete("/:id", async (req, res) => {
+  console.log("DELETE: deleting agent: ", req.params.id);
   try {
     const deletedAgent = await deleteAgent(req.params.id);
     if (deletedAgent == null) {

@@ -1,5 +1,5 @@
 const { Agent } = require("../models/Agent");
-
+const { sampleAgents } = require("../models/SampleData");
 // Load sample data
 async function loadSampleData() {
   try {
@@ -11,7 +11,8 @@ async function loadSampleData() {
 
 async function initializeDatabase() {
   try {
-    // await Agent.deleteMany({}); DANGER - DELETE ALL ENTRIES -- for CLEARING CHANGES/ DEV MODE ONLY
+    //  DANGER - DELETE ALL ENTRIES -- for CLEARING CHANGES/ DEV MODE ONLY
+    // await Agent.deleteMany({});
     const count = await Agent.countDocuments();
     if (count === 0) {
       await loadSampleData();
